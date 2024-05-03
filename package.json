@@ -9,14 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/progress": "^2.2.0",
+    "@nextui-org/progress": "^2.0.28",
+    "axios": "^1.6.8",
+    "firebase": "^10.11.0",
+    "iron-session": "^8.0.1",
+    "next": "14.1.4",
+    "next-iron-session": "^4.2.0",
+    "nookies": "^2.5.2",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.1.4"
+    "react-firebase-hooks": "^5.1.1",
+    "react-responsive-carousel": "^3.2.23"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
-    "@types/react-dom": "^18"
+    "@types/react-dom": "^18",
+    "typescript": "^5"
   }
 }
