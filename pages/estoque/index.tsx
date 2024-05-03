@@ -707,7 +707,7 @@ export default function Storage(){
                             justifyContent: 'flex-end',
                             cursor: 'pointer',
                         }}
-                        onClick={() => { setAddEditProductModal(false); setFormData(defaultFormData); setNewCategory(false) }}
+                        onClick={() => { setAddEditProductModal(false); setFormData(defaultFormData); setNewCategory(false); setIsEditScreen(false) }}
                     >
                         <p style={{...defaultText}}>X</p>
                     </div>
