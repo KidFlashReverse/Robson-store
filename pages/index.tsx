@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import getAllData from '../service/getAllData';
 import { defaultTitle, defaultSubTitle, defaultText } from '../ts/constants'
 import { Product } from '../ts/interfaces';
+import Head from 'next/head';
 
 export default function DashBoard(){
     const user = useAuth();
@@ -70,8 +71,10 @@ export default function DashBoard(){
 
     return(
         <>
-            <div>
+            <Head>
                 <title>Dashboard</title>
+            </Head>
+            <div>
                 <h1 style={{...defaultTitle}}>Home</h1>
             </div>
             <div style={{

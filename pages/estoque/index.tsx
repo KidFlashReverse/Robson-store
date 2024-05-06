@@ -11,12 +11,12 @@ import { useEffect, useState } from 'react';
 import getAllData from '../../service/getAllData';
 import setData from '../../service/setData';
 import { CircularProgress } from '@chakra-ui/progress';
-import { DocumentData, deleteDoc, doc, snapshotEqual, updateDoc } from 'firebase/firestore';
-import { useRouter } from 'next/router';
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { db, storage } from '../../service/firebase';
 import { Product } from '../../ts/interfaces';
 import CarouselProducts from '../../components/carousel';
+import Head from 'next/head';
 
 interface Category {
     id: number,
@@ -40,7 +40,6 @@ interface FormData{
 }
 
 export default function Storage(){
-    const router = useRouter();
     const [products, setProducts] = useState<Array<Product>>();
     const [categories, setCategories] = useState<Array<Category>>(); 
 
@@ -74,13 +73,15 @@ export default function Storage(){
     const [isEditScreen, setIsEditScreen] = useState(false);
     const [productModal, setProductModal] = useState(false);
     const [productModalInfo, setProductModalInfo] = useState<Product>();
-    const [defaultFormData, setDefaultFormData] = useState<FormData>({
+
+    const defaultFormData: FormData = {
         name: '',
         quantity: '',
         description: '',
         price: '',
         category: '',
-    });
+    };
+
     const [formData, setFormData] = useState<FormData>(defaultFormData);
     const [imagesUrls, setImagesUrls] = useState<any>();
     const [newCategory, setNewCategory] = useState(false);
@@ -268,11 +269,13 @@ export default function Storage(){
 
     return (
         <>
+            <Head>
+                <title>Estoque</title>
+            </Head>
             <div style={{
                 filter: addEditProductModal || productModal ? 'blur(3px)' : undefined,
                 transition: 'all 0.5s',
             }}>
-                <title>Estoque</title>
                 <h1 style={defaultTitle}>Estoque</h1>
             </div>
             <div style={{
@@ -571,12 +574,11 @@ export default function Storage(){
                                 marginTop: '5px',
                                 display: 'flex',
                                 justifyContent: 'flex-end',
-                                cursor: 'pointer',
                                 position: 'relative',
                                 zIndex: '4',
                             }}
                         >
-                            <p onClick={() => { setProductModal(false); setProductModalInfo(undefined); }} style={{...defaultText}}>X</p>
+                            <p onClick={() => { setProductModal(false); setProductModalInfo(undefined); }} style={{...defaultText, cursor: 'pointer'}}>X</p>
                         </div>
                         
                         <CarouselProducts 
@@ -705,11 +707,10 @@ export default function Storage(){
                             marginTop: '5px',
                             display: 'flex',
                             justifyContent: 'flex-end',
-                            cursor: 'pointer',
                         }}
                         onClick={() => { setAddEditProductModal(false); setFormData(defaultFormData); setNewCategory(false); setIsEditScreen(false) }}
                     >
-                        <p style={{...defaultText}}>X</p>
+                        <p style={{...defaultText, cursor: 'pointer'}}>X</p>
                     </div>
                     <div style={{
                         width: '100%',
