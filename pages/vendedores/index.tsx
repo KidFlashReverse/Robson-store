@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import getAllData from "../../service/getAllData";
 import { Client, User } from "../../ts/interfaces";
 import SearchIcon from '../../public/buttonsIcons/searchIcon.png';
+import NextImageIcon from '../../public/buttonsIcons/nextImageIcon.png';
 import Image from "next/image";
 import { DocumentData, collectionGroup, getDocs } from "firebase/firestore";
 import { db } from "../../service/firebase";
@@ -460,10 +461,27 @@ export default function Vendedores(){
                                                 textAlign: 'center',
                                                 maxHeight: 'auto',
                                                 transition: 'all 0.5s',
+                                                display: 'flex'
                                             }}
                                             onClick={() => showClientInformations === client.nome ? setShowClientInformations('') : setShowClientInformations(client.nome) }
                                         >
-                                            <p style={{...defaultText, position: 'relative', height: '35px', zIndex: 3, backgroundColor: '#F0F0F0', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{client.nome}</p>
+                                            <div style={{
+                                                width: '60%',
+                                                display: 'flex',
+                                                justifyContent: 'flex-end',
+                                            }}>
+                                                <p style={{...defaultText, position: 'relative', height: '35px', zIndex: 3, backgroundColor: '#F0F0F0', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{client.nome}</p>
+                                            </div>
+                                            <div style={{
+                                                width: '40%',
+                                                display: 'flex',
+                                                justifyContent: 'flex-end',
+                                                position: 'relative',
+                                                top: '10px',
+                                                right: '10px',
+                                            }}>
+                                                <Image style={{rotate: showClientInformations === client.nome ? '-90deg' : '90deg', transition: '0.6s all' }} src={NextImageIcon} width={20} alt="" />
+                                            </div>
                                         </div>
                                         
                                         <div style={{
