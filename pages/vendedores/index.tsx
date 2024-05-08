@@ -1,29 +1,58 @@
 import Head from "next/head";
-import { defaultText, defaultTitle } from "../../ts/constants";
+import { defaultSubTitle, defaultText, defaultTitle } from "../../ts/constants";
 import { useEffect, useState } from "react";
 import getAllData from "../../service/getAllData";
-import { User } from "../../ts/interfaces";
+import { Client, User } from "../../ts/interfaces";
 import SearchIcon from '../../public/buttonsIcons/searchIcon.png';
 import Image from "next/image";
+import { DocumentData, collectionGroup, getDocs } from "firebase/firestore";
+import { db } from "../../service/firebase";
 
 export default function Vendedores(){
     const [users, setUsers] = useState<Array<User>>();
-    const [usersToScreen, setUsersToScreen] = useState<Array<User>>();
+    const [search, setSearch] = useState('');
+    const [userSelected, setUserSelected] = useState<User>();
+    const [userModal, setUserModal] = useState(false);
+    const [userClients, setUserClients] = useState<Array<Client | DocumentData>>([]);
+    const [userClientsModal, setUserClientsModal] = useState(false);
+    const [showClientInformations, setShowClientInformations] = useState('');
+    const [clientFilter, setClientFilter] = useState('');
 
     const getUsers = () => {
         getAllData('users', setUsers);
     };
 
+    const getClients = () => {
+        const dbRef = collectionGroup(db, 'clientes');
+
+        getDocs(dbRef).then((query) => {
+            const data = query.docs.map((doc) => { return doc.data() });
+            const arrayClients: Array<DocumentData> = [];
+
+            data.map((doc) => {
+                if(doc.userId === userSelected?.id){
+                    arrayClients.push(doc);
+                }
+            });
+
+            setUserClients(arrayClients);
+            setUserClientsModal(true);
+        });
+    }
+
     const usersBox = (user: User) => {
         return (
-            <div style={{
-                width: '280px',
-                height: '200px',
-                backgroundColor: '#F0F0F0',
-                marginRight: '40px',
-                borderRadius: '15px',
-                cursor: 'pointer',
-            }}>
+            <div 
+                style={{
+                    width: '280px',
+                    height: '200px',
+                    backgroundColor: '#F0F0F0',
+                    marginRight: '40px',
+                    borderRadius: '15px',
+                    cursor: 'pointer',
+                }}
+                onClick={() => { setUserSelected(user); setUserModal(true); }}
+            >
                 <div style={{
                     position: 'relative',
                     height: '70%',
@@ -62,10 +91,6 @@ export default function Vendedores(){
             setUsers(users.filter((user) => !user.hasOwnProperty('isAdm')));
             return;
         }
-
-        if(!usersToScreen){
-            setUsersToScreen(users);
-        }
     }, [users]);
 
     return(
@@ -79,6 +104,7 @@ export default function Vendedores(){
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                filter: userModal ? 'blur(3px) brightness(0.7)' : '',
             }}>
                 <h1 style={defaultTitle}>Vendedores</h1>
 
@@ -98,7 +124,7 @@ export default function Vendedores(){
                           paddingLeft: '15px',
                           fontSize: '1.3em',
                         }}
-                        onChange={(e) => setUsersToScreen(users?.filter(user => user.nome.toLowerCase().includes(e.target.value.toLowerCase())))}
+                        onChange={(e) => setSearch(e.target.value)}
                         placeholder="Buscar"
                         type="text" 
                     />
@@ -122,6 +148,8 @@ export default function Vendedores(){
                 overflowY: 'hidden',
                 paddingRight: '50px',
                 paddingBottom: '20px',
+                filter: userModal ? 'blur(3px) brightness(0.7)' : '',
+                transition: '0.5s all'
             }}>
                 <div style={{
                     position: 'relative',
@@ -133,8 +161,12 @@ export default function Vendedores(){
                         display: 'flex',
                         height: '250px'
                     }}>
-                        {usersToScreen?.map((user, index) => {
-                            if(usersToScreen.length > 4 && (index + 1 <= Math.round(usersToScreen.length / 2))){
+                        {users?.map((user, index) => {
+                            if(search != '' && !user.nome.toLowerCase().includes(search.toLowerCase())){
+                                return <></>
+                            }
+
+                            if(users.length > 4 && (index + 1 <= Math.round(users.length / 2))){
                                 return (
                                     <>
                                         {usersBox(user)}
@@ -142,7 +174,7 @@ export default function Vendedores(){
                                 );
                             }
 
-                            if(usersToScreen.length <= 4){
+                            if(users.length <= 4){
                                 return (
                                     <>
                                         {usersBox(user)}
@@ -151,13 +183,17 @@ export default function Vendedores(){
                             }
                         })}
                     </div>
-                    {usersToScreen && usersToScreen.length > 4 ? 
+                    {users && users.length > 4 ? 
                         <div style={{
                             display: 'flex',
                             height: '250px'
                         }}>
-                            {usersToScreen.map((user, index) => {
-                                if(index + 1 > Math.round(usersToScreen.length / 2)){
+                            {users.map((user, index) => {
+                                if(search != '' && !user.nome.toLowerCase().includes(search.toLowerCase())){
+                                    return <></>
+                                }
+
+                                if(index + 1 > Math.round(users.length / 2)){
                                     return (
                                         <>
                                             {usersBox(user)}
@@ -169,6 +205,306 @@ export default function Vendedores(){
                     : <></>}
                 </div>
             </div>
+
+            {/* Modals */}
+
+            {/* User Modal */}
+
+            {userModal ?
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    filter: userClientsModal ? 'blur(3px) brightness(0.7)' : '',
+                    transition: '0.6s all'
+                }}>
+                    <div style={{
+                        width: '700px',
+                        height: '50%',
+                        backgroundColor: '#F0F0F0',
+                        borderRadius: '15px',
+                    }}>
+                        <div style={{
+                            width: '98%',
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            position: 'relative',
+                            top: '5px',
+                            pointerEvents: 'none',
+                        }}>
+                            <button 
+                                style={{
+                                    ...defaultText,
+                                    border: 0,
+                                    backgroundColor: '#F0F0F0',
+                                    fontSize: '1.2em',
+                                    pointerEvents: 'auto',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={() => {
+                                    setUserModal(false);
+                                    setUserSelected(undefined);
+                                }}
+                            >X</button>
+                        </div>
+
+                        <div style={{
+                            display: 'flex',
+                            height: '60%',
+                        }}>
+                            <div style={{
+                                position: 'relative',
+                                width: '50%',
+                                marginLeft: '20px',
+                                top: '10%',
+                            }}> 
+                                <h3 style={defaultSubTitle}>Telefone: <span style={{...defaultText, fontSize: '0.8em'}}>{userSelected?.telefone}</span></h3>
+                                <h3 style={{...defaultSubTitle, marginTop: '10px'}}>Email: <span style={{...defaultText, fontSize: '0.8em'}}>teste@test.com</span></h3>
+                                <h3 style={{...defaultSubTitle, marginTop: '10px'}}>Endereço: <span style={{...defaultText, fontSize: '0.8em'}}> Rua Churubengos, 666. Bairro Churubangus - Cidade de Deus/RJ</span></h3>
+                                <button 
+                                    style={{
+                                        ...defaultText,
+                                        marginTop: '30px',
+                                        border: 0,
+                                        backgroundColor: 'white',
+                                        width: '80%',
+                                        height: '30px',
+                                        borderRadius: '10px',
+                                        fontSize: '1.2em',
+                                        cursor: 'pointer',
+                                    }}
+                                    onClick={getClients}
+                                >
+                                    Clientes
+                                </button>
+                            </div>
+                            <div style={{
+                                position: 'relative',
+                                top: '10%',
+                                width: '50%',
+                                height: '70%',
+                                textAlign: 'center',
+                            }}>
+                                <img 
+                                    style={{
+                                        width: '80%',
+                                        height: '90%',
+                                        objectFit: 'contain'
+                                    }}
+                                    src={userSelected?.avatarURL} 
+                                    alt="" 
+                                />
+                                <h3 style={{...defaultSubTitle, marginTop: '10px'}}>{userSelected?.nome}</h3>
+                                <h5 style={{...defaultText, marginTop: '5px'}}>Apelido: </h5>
+                            </div>
+                        </div>
+
+                        <div style={{
+                            width: '100%',
+                            height: '30%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <div style={{
+                                width: '50%',
+                                display: 'flex',
+                                justifyContent: 'space-between'
+                            }}>
+                                <button style={{
+                                    ...defaultText,
+                                    color: 'black',
+                                    marginTop: '30px',
+                                    border: 0,
+                                    backgroundColor: 'cyan',
+                                    width: '140px',
+                                    height: '30px',
+                                    borderRadius: '10px',
+                                    fontSize: '1.2em',
+                                    cursor: 'pointer',
+                                }}>
+                                    Editar
+                                </button>
+                                <button style={{
+                                    ...defaultText,
+                                    color: 'black',
+                                    marginTop: '30px',
+                                    border: 0,
+                                    backgroundColor: 'red',
+                                    width: '140px',
+                                    height: '30px',
+                                    borderRadius: '10px',
+                                    fontSize: '1.2em',
+                                    cursor: 'pointer',
+                                }}>
+                                    Excluir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            : <></>}
+
+            {/* User Client Modal */}
+            
+            {userClientsModal ?
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <div style={{
+                        width: '300px',
+                        height: '40%',
+                        backgroundColor: '#F0F0F0',
+                        borderRadius: '10px',
+                    }}>
+                        <div style={{
+                            width: '98%',
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            position: 'relative',
+                            top: '5px',
+                            backgroundColor: '#F0F0F0',
+                            pointerEvents: 'none',
+                            textAlign: 'center',
+                        }}>
+                            <div style={{
+                                width: '67%',
+                                display: 'flex',
+                                justifyContent: 'flex-end',
+                            }}>
+                                <h2 style={{...defaultTitle}}>Clientes</h2>
+                            </div>
+                            <div style={{
+                                width: '33%',
+                                display: 'flex',
+                                justifyContent: 'flex-end',
+                            }}>
+                                <button 
+                                    style={{
+                                        ...defaultText,
+                                        border: 0,
+                                        backgroundColor: '#F0F0F0',
+                                        fontSize: '1.2em',
+                                        pointerEvents: 'auto',
+                                        cursor: 'pointer',
+                                    }}
+                                    onClick={() => {
+                                        setUserClientsModal(false);
+                                        setUserClients([]);
+                                    }}
+                                >
+                                    X
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style={{
+                            position: 'relative',
+                            display: 'flex',
+                            width: '100%',
+                            justifyContent: 'center',
+                            top: '15px',
+                        }}>
+                            <input 
+                                style={{
+                                    width: '80%',
+                                    height: '20px',
+                                    padding: '5px',
+                                    border: 0,
+                                    borderRadius: '10px',
+                                }} 
+                                onChange={(e) => setClientFilter(e.target.value)}
+                                type="text" 
+                                placeholder="Pesquisar por Nome, CPF, Telefone, etc." 
+                            />
+                        </div>
+
+                        <div style={{
+                            position: 'relative',
+                            top: '10%',
+                            height: '80%',
+                            width: '100%',
+                            overflowY: 'auto',
+                        }}>
+                            {userClients?.map((client) => {
+                                if(
+                                    clientFilter != '' &&
+                                    (!client.nome.toLowerCase().includes(clientFilter.toLowerCase()) &&
+                                    !client.cpf.toLowerCase().replace('.', '').includes(clientFilter.toLowerCase().replace('.', '')) &&
+                                    !client.telefone.toLowerCase().replace(/[^a-zA-Z0-9]/g, '').includes(clientFilter.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')) &&  
+                                    !client.email.toLowerCase().includes(clientFilter.toLowerCase()) &&  
+                                    !client.endereco.toLowerCase().includes(clientFilter.toLowerCase()))
+                                ){
+                                    return <></>
+                                }
+
+                                return (
+                                    <div>
+                                        <div 
+                                            style={{
+                                                width: '100%',
+                                                cursor: 'pointer',
+                                                borderBottom: '1px solid black',
+                                                textAlign: 'center',
+                                                maxHeight: 'auto',
+                                                transition: 'all 0.5s',
+                                            }}
+                                            onClick={() => showClientInformations === client.nome ? setShowClientInformations('') : setShowClientInformations(client.nome) }
+                                        >
+                                            <p style={{...defaultText, position: 'relative', height: '35px', zIndex: 3, backgroundColor: '#F0F0F0', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{client.nome}</p>
+                                        </div>
+                                        
+                                        <div style={{
+                                            position: 'relative',
+                                            height: 'auto',
+                                            backgroundColor: 'white',
+                                            textAlign: 'left',
+                                            paddingLeft: '15px',
+                                            borderBottom: '1px solid black',
+                                            maxHeight: showClientInformations === client.nome ? '100px' : '0',
+                                            zIndex: 2,
+                                            transition: '0.8s all',
+                                            overflow: 'hidden'
+                                        }}>
+                                                <p style={{...defaultText, fontSize: '0.8em'}}>CPF: {client.cpf}</p>
+                                                <p style={{...defaultText, fontSize: '0.8em'}}>Telefone: {client.telefone}</p>
+                                                <p style={{...defaultText, fontSize: '0.8em'}}>Email: {client.email}</p>
+                                                <p style={{...defaultText, fontSize: '0.8em'}}>Endereço: {client.endereco}</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            {userClients.length === 0 ?
+                                <p style={{
+                                    ...defaultText,
+                                    textAlign: 'center'
+                                }}>
+                                    Sem Clientes
+                                </p>
+                            : <></>}
+                        </div>
+                    </div>
+                </div>
+            : <></>}
+
+            <style jsx global>{`
+                body {
+                    background: ${userModal ? "#B2B2B2" : "#F7F7F7"};
+                    transition: all 1s;
+                }
+            `}</style>
         </>
     );
 }

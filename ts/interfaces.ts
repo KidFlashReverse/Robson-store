@@ -20,3 +20,12 @@ export interface User {
     telefone: string,
     isAdm?: boolean,
 }
+
+export interface Client {
+    userId: string,
+    nome: string,
+    cpf: string,
+    email: string,
+    endereco: string,
+    telefone: string,
+}
