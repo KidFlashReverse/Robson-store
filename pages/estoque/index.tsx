@@ -39,7 +39,7 @@ interface FormData{
     category: string,
 }
 
-export default function Storage(){
+export default function Estoque(){
     const [products, setProducts] = useState<Array<Product>>();
     const [categories, setCategories] = useState<Array<Category>>(); 
 

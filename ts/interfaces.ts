@@ -12,3 +12,11 @@ export interface Product {
     images_urls: Array<string>,
     category: string,
 }
+
+export interface User {
+    id: string,
+    avatarURL: string,
+    nome: string,
+    telefone: string,
+    isAdm?: boolean,
+}

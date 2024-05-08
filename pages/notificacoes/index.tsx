@@ -1,6 +1,6 @@
 import { defaultTitle } from "../../ts/constants";
 
-export default function Notifications(){
+export default function Notificacoes(){
     return (
         <>
             <div>
