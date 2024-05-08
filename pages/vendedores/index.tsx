@@ -435,7 +435,7 @@ export default function Vendedores(){
                         <div style={{
                             position: 'relative',
                             top: '10%',
-                            height: '80%',
+                            height: '65%',
                             width: '100%',
                             overflowY: 'auto',
                         }}>
