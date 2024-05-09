@@ -1,9 +1,11 @@
+import { Timestamp } from "firebase/firestore"
+
 export interface Image{
     id: number,
     url: string,
 }
 
-export interface Product {
+export interface Produto {
     id: number,
     name: string,
     quantity: string,
@@ -13,7 +15,7 @@ export interface Product {
     category: string,
 }
 
-export interface User {
+export interface Usuario {
     id: string,
     avatarURL: string,
     nome: string,
@@ -21,11 +23,22 @@ export interface User {
     isAdm?: boolean,
 }
 
-export interface Client {
+export interface Cliente {
     userId: string,
     nome: string,
     cpf: string,
     email: string,
     endereco: string,
     telefone: string,
+}
+
+export interface Pedido {
+    id: string,
+    id_usuario: string,
+    produtos: [
+        nome: string,
+        quantidade: number,
+    ]
+    estado: string,
+    data: Timestamp,
 }

@@ -14,7 +14,7 @@ import { CircularProgress } from '@chakra-ui/progress';
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { db, storage } from '../../service/firebase';
-import { Product } from '../../ts/interfaces';
+import { Produto } from '../../ts/interfaces';
 import CarouselProducts from '../../components/carousel';
 import Head from 'next/head';
 
@@ -40,7 +40,7 @@ interface FormData{
 }
 
 export default function Estoque(){
-    const [products, setProducts] = useState<Array<Product>>();
+    const [products, setProducts] = useState<Array<Produto>>();
     const [categories, setCategories] = useState<Array<Category>>(); 
 
     const defineProductsQuantities = () => {
@@ -72,7 +72,7 @@ export default function Estoque(){
     const [addEditProductModal, setAddEditProductModal] = useState(false);
     const [isEditScreen, setIsEditScreen] = useState(false);
     const [productModal, setProductModal] = useState(false);
-    const [productModalInfo, setProductModalInfo] = useState<Product>();
+    const [productModalInfo, setProductModalInfo] = useState<Produto>();
 
     const defaultFormData: FormData = {
         name: '',

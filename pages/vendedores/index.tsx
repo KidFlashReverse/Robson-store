@@ -2,7 +2,7 @@ import Head from "next/head";
 import { defaultSubTitle, defaultText, defaultTitle } from "../../ts/constants";
 import { useEffect, useState } from "react";
 import getAllData from "../../service/getAllData";
-import { Client, User } from "../../ts/interfaces";
+import { Cliente, Usuario } from "../../ts/interfaces";
 import SearchIcon from '../../public/buttonsIcons/searchIcon.png';
 import NextImageIcon from '../../public/buttonsIcons/nextImageIcon.png';
 import Image from "next/image";
@@ -10,11 +10,11 @@ import { DocumentData, collectionGroup, getDocs } from "firebase/firestore";
 import { db } from "../../service/firebase";
 
 export default function Vendedores(){
-    const [users, setUsers] = useState<Array<User>>();
+    const [users, setUsers] = useState<Array<Usuario>>();
     const [search, setSearch] = useState('');
-    const [userSelected, setUserSelected] = useState<User>();
+    const [userSelected, setUserSelected] = useState<Usuario>();
     const [userModal, setUserModal] = useState(false);
-    const [userClients, setUserClients] = useState<Array<Client | DocumentData>>([]);
+    const [userClients, setUserClients] = useState<Array<Cliente | DocumentData>>([]);
     const [userClientsModal, setUserClientsModal] = useState(false);
     const [showClientInformations, setShowClientInformations] = useState('');
     const [clientFilter, setClientFilter] = useState('');
@@ -41,7 +41,7 @@ export default function Vendedores(){
         });
     }
 
-    const usersBox = (user: User) => {
+    const usersBox = (user: Usuario) => {
         return (
             <div 
                 style={{
