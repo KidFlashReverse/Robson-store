@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import getAllData from '../service/getAllData';
 import { defaultTitle, defaultSubTitle, defaultText } from '../ts/constants'
-import { Product } from '../ts/interfaces';
+import { Produto } from '../ts/interfaces';
 import Head from 'next/head';
 
 export default function DashBoard(){
     const user = useAuth();
 
-    const [products, setProducts] = useState<Array<Product>>();
+    const [products, setProducts] = useState<Array<Produto>>();
     
     const productsSelled = [
         {name: 'Product 1', sells: 50, storage: 10},
