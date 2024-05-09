@@ -1,12 +1,12 @@
 import { Carousel } from 'react-responsive-carousel';
-import { Product } from '../ts/interfaces';
+import { Produto } from '../ts/interfaces';
 import { Dispatch, SetStateAction } from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 export default function CarouselProducts({
     productModalInfo,
 } : {
-    productModalInfo: Product | undefined,
+    productModalInfo: Produto | undefined,
 }){
     return (
         <>
