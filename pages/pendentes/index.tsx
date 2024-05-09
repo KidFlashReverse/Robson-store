@@ -31,14 +31,25 @@ export default function PedidosPendentes(){
         }).catch(e => {console.log(e)})
     }
 
+    const totalItensOrder = (pedido: Pedido) => {
+        const totalQuantity = pedido.produtos.reduce((total: number, produtoPedido: any) => {
+            return total + produtoPedido.quantidade;
+        }, 0);
+
+        return totalQuantity > 1 ? totalQuantity + ' Itens' : totalQuantity + ' Item';
+    }
+
     const totalPriceOrder = (pedido: Pedido) => {
         const totalPrice = pedido.produtos.reduce((total: number, produtoPedido: any) => {
             const produtoA: any = produtos?.filter((produto) => produto.name === produtoPedido.nome);
 
-            return total + parseInt(produtoA[0].price);
+            return total + (parseInt(produtoA[0].price) * produtoPedido.quantidade);
         }, 0);
 
-        return totalPrice;
+        return totalPrice.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
     }
 
     useEffect(() => {
@@ -74,6 +85,7 @@ export default function PedidosPendentes(){
                                 height: '100px',
                                 border: '5px solid #394B58',
                                 paddingTop: '25px',
+                                marginBottom: '20px',
                                 borderRadius: '20px',
                                 display: 'flex',
                                 justifyContent: 'space-around',
@@ -94,22 +106,30 @@ export default function PedidosPendentes(){
                                 <div style={{
                                     width: '30%',
                                     display: 'flex',
-                                    justifyContent: 'space-around',
+                                    justifyContent: 'space-between',
                                 }}>
                                     <h2 style={{
                                         ...defaultTitle,
                                         color: '#394B58',
-                                        fontWeight: '200'
+                                        fontWeight: '200',
+                                        width: '50%'
                                     }}>
-                                        {pedido.produtos.length > 1 ? pedido.produtos.length + ' Itens' : pedido.produtos.length + ' Item'}
+                                        {totalItensOrder(pedido)}
                                     </h2>
 
-                                    <h2 style={{
-                                        ...defaultTitle,
-                                        color: '#394B58',
+                                    <div style={{
+                                        width: 'auto',
+                                        display: 'flex',
+                                        justifyContent: 'flex-start',
+                                        width: '50%'
                                     }}>
-                                        R$ {totalPriceOrder(pedido)}
-                                    </h2>
+                                        <h2 style={{
+                                            ...defaultTitle,
+                                            color: '#394B58',
+                                        }}>
+                                            {totalPriceOrder(pedido)}
+                                        </h2>
+                                    </div>
                                 </div>
                                 
                                 <div style={{
