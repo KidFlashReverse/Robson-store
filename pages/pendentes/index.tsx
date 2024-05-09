@@ -60,9 +60,11 @@ export default function PedidosPendentes(){
                 position: 'relative',
                 top: '60px',
                 width: '98%',
+                height: '80vh',
                 display: 'flex',
                 flexWrap: 'wrap',
                 justifyContent: 'center',
+                overflowY: 'auto',
             }}>
                 {pedidos?.map((pedido) => {
                     return (
@@ -70,10 +72,9 @@ export default function PedidosPendentes(){
                             <div style={{
                                 width: '80%',
                                 height: '100px',
-                                border: '7px solid #394B58',
+                                border: '5px solid #394B58',
                                 paddingTop: '25px',
-                                borderRadius: '10px',
-                                marginBottom: '20px',
+                                borderRadius: '20px',
                                 display: 'flex',
                                 justifyContent: 'space-around',
                                 alignItems: 'center',
