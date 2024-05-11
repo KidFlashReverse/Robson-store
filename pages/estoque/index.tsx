@@ -17,6 +17,7 @@ import { db, storage } from '../../service/firebase';
 import { Produto } from '../../ts/interfaces';
 import CarouselProducts from '../../components/carousel';
 import Head from 'next/head';
+import Loading from '../../components/loading';
 
 interface Category {
     id: number,
@@ -523,17 +524,18 @@ export default function Estoque(){
                                 </>
                             );  
                         }): (
-                            <>
-                                <div style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}>
-                                    <CircularProgress left='16%' size='40%' thickness='5px' isIndeterminate />
-                                </div>
-                            </>
+                            <div style={{
+                                width: '100%',
+                                height: '100%',
+                                marginLeft: '30%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
+                                <Loading 
+                                    isFullScreen={false}
+                                />
+                            </div>
                         )}
                     </div>
                 </div>

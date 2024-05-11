@@ -8,8 +8,11 @@ import NextImageIcon from '../../public/buttonsIcons/nextImageIcon.png';
 import Image from "next/image";
 import { DocumentData, collectionGroup, getDocs } from "firebase/firestore";
 import { db } from "../../service/firebase";
+import { useRouter } from "next/router";
 
 export default function Vendedores(){
+    const router = useRouter();
+
     const [users, setUsers] = useState<Array<Usuario>>();
     const [search, setSearch] = useState('');
     const [userSelected, setUserSelected] = useState<Usuario>();
@@ -18,6 +21,7 @@ export default function Vendedores(){
     const [userClientsModal, setUserClientsModal] = useState(false);
     const [showClientInformations, setShowClientInformations] = useState('');
     const [clientFilter, setClientFilter] = useState('');
+    const [comprasModal, setComprasModal] = useState(false);
 
     const getUsers = () => {
         getAllData('users', setUsers);
@@ -221,7 +225,7 @@ export default function Vendedores(){
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    filter: userClientsModal ? 'blur(3px) brightness(0.7)' : '',
+                    filter: userClientsModal || comprasModal ? 'blur(3px) brightness(0.7)' : '',
                     transition: '0.6s all'
                 }}>
                     <div style={{
@@ -282,6 +286,22 @@ export default function Vendedores(){
                                     onClick={getClients}
                                 >
                                     Clientes
+                                </button>
+                                <button 
+                                    style={{
+                                        ...defaultText,
+                                        marginTop: '5px',
+                                        border: 0,
+                                        backgroundColor: 'white',
+                                        width: '80%',
+                                        height: '30px',
+                                        borderRadius: '10px',
+                                        fontSize: '1.2em',
+                                        cursor: 'pointer',
+                                    }}
+                                    onClick={() => setComprasModal(true)}
+                                >
+                                    Compras
                                 </button>
                             </div>
                             <div style={{
@@ -347,6 +367,102 @@ export default function Vendedores(){
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            : <></>}
+
+            {/* Compras Modal */}
+
+            {comprasModal ? 
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <div style={{
+                        width: '300px',
+                        height: '30%',
+                        backgroundColor: '#F0F0F0',
+                        borderRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexWrap: 'wrap',
+                    }}> 
+                        <div style={{
+                            width: '98%',
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            position: 'relative',
+                            top: '5px',
+                            pointerEvents: 'none',
+                        }}>
+                            <button 
+                                style={{
+                                    ...defaultText,
+                                    border: 0,
+                                    backgroundColor: '#F0F0F0',
+                                    fontSize: '1.2em',
+                                    pointerEvents: 'auto',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={() => {
+                                    setComprasModal(false)
+                                }}
+                            >X</button>
+                        </div>
+                        <button 
+                            style={{
+                                ...defaultText,
+                                marginTop: '5px',
+                                border: 0,
+                                backgroundColor: 'white',
+                                width: '80%',
+                                height: '30px',
+                                borderRadius: '10px',
+                                fontSize: '1.2em',
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => window.location.replace(`/pendentes?name=${userSelected?.nome}`)}
+                        >
+                            Pendentes
+                        </button>
+                        <button 
+                            style={{
+                                ...defaultText,
+                                marginTop: '5px',
+                                border: 0,
+                                backgroundColor: 'white',
+                                width: '80%',
+                                height: '30px',
+                                borderRadius: '10px',
+                                fontSize: '1.2em',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            Enviadas
+                        </button>
+                        <button 
+                            style={{
+                                ...defaultText,
+                                marginTop: '5px',
+                                marginBottom: '10px',
+                                border: 0,
+                                backgroundColor: 'white',
+                                width: '80%',
+                                height: '30px',
+                                borderRadius: '10px',
+                                fontSize: '1.2em',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            Concluídas
+                        </button>
                     </div>
                 </div>
             : <></>}

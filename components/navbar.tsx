@@ -115,7 +115,7 @@ export default function Navbar(){
                     }}
                     onMouseEnter={() => setButtonHover('pendentes')}
                     onMouseLeave={() => setButtonHover('')}
-                    onClick={() => router.push('/pendentes')}
+                    onClick={() => window.location.replace('/pendentes')}   
                 >
                     <Image src={PendingRequestsIcon} width={30} alt="Página dos Pedidos Pendentes" style={{filter: 'invert(15%)'}} />
                 </div>
