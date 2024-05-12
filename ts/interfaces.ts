@@ -36,8 +36,7 @@ export interface Pedido {
     id: string,
     id_usuario: string,
     produtos: [
-        nome: string,
-        quantidade: number,
+        {nome: string, quantidade: number}
     ]
     estado: string,
     data: Timestamp,

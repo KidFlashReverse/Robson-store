@@ -9,6 +9,18 @@ import Loading from "../../components/loading";
 import Head from "next/head";
 import { GetServerSideProps, GetServerSidePropsResult, InferGetServerSidePropsType } from "next";
 
+interface ProdutoPedido extends Produto{
+    totalQuantity: number,
+    totalPrice: number
+}
+interface SelectedPedido {
+    id: string,
+    nome: string,
+    date: Timestamp,
+    produtos: any,
+    totalPrice: number,
+}
+
 export default function PedidosPendentes({
     userName
 }: InferGetServerSidePropsType<typeof getServerSideProps>){
@@ -17,6 +29,8 @@ export default function PedidosPendentes({
     const [usuarios, setUsuarios] = useState<Array<Usuario>>();
     const [search, setSearch] = useState(userName || '');
     const [loading, setLoading] = useState(true);
+    const [pedidoModal, setPedidoModal] = useState(false);
+    const [selectedPedido, setSelectedPedido] = useState<SelectedPedido>();
 
     const getPedidos = () => {
         const dbRef = collectionGroup(db, 'pedidos');
@@ -69,6 +83,31 @@ export default function PedidosPendentes({
         });
     }
 
+    const setSelectedPedidoInfo = (pedido: Pedido) => {
+        const produtosPedido = pedido.produtos.map((produtoPedido) => {
+            const produtoInfos: Produto[] | undefined = produtos?.filter((produto) => produto.name === produtoPedido.nome);
+
+            if(produtoInfos){
+                const totalQuantity = produtoPedido.quantidade;
+                const totalPrice = totalQuantity * parseInt(produtoInfos[0].price); 
+
+                return {...produtoInfos[0], totalQuantity: totalQuantity, totalPrice: totalPrice};
+            }
+        });
+
+        const nome = usuarios?.find((usuario) => usuario.id === pedido.id_usuario)?.nome;
+
+        const totalPrice = produtosPedido.reduce((total, produtoPedido) => {return produtoPedido?.totalPrice ? total + produtoPedido?.totalPrice : 0}, 0);
+
+        setSelectedPedido({
+            id: pedido.id,
+            nome: nome ? nome : '',
+            date: pedido.data,
+            produtos: produtosPedido,
+            totalPrice: totalPrice,
+        });
+    }
+
     useEffect(() => {
         if(!pedidos && !produtos && !usuarios){
             getPedidos();
@@ -90,7 +129,9 @@ export default function PedidosPendentes({
                     <div style={{
                         width: '98%',
                         display: 'flex',
-                        justifyContent: 'space-between'
+                        justifyContent: 'space-between',
+                        filter: pedidoModal ? 'blur(3px)' : '',
+                        transition: '0.5s all'
                     }}>
                         <h1 style={{...defaultTitle}}>Pedidos Pendentes</h1>
 
@@ -120,6 +161,8 @@ export default function PedidosPendentes({
                         flexWrap: 'wrap',
                         justifyContent: 'center',
                         overflowY: 'auto',
+                        filter: pedidoModal ? 'blur(3px)' : '',
+                        transition: '0.5s all'
                     }}>
                         {pedidos && produtos && pedidos?.map((pedido) => {
                             const nomeUsuario = usuarios?.find((usuario) => usuario.id === pedido.id_usuario)?.nome;
@@ -132,19 +175,22 @@ export default function PedidosPendentes({
 
                             return (
                                 <>
-                                    <div style={{
-                                        width: '80%',
-                                        height: '100px',
-                                        border: '5px solid #394B58',
-                                        paddingTop: '25px',
-                                        marginBottom: '20px',
-                                        borderRadius: '20px',
-                                        display: 'flex',
-                                        justifyContent: 'space-around',
-                                        alignItems: 'center',
-                                        flexWrap: 'wrap',
-                                        cursor: 'pointer'
-                                    }}>
+                                    <div 
+                                        style={{
+                                            width: '80%',
+                                            height: '100px',
+                                            border: '5px solid #394B58',
+                                            paddingTop: '25px',
+                                            marginBottom: '20px',
+                                            borderRadius: '20px',
+                                            display: 'flex',
+                                            justifyContent: 'space-around',
+                                            alignItems: 'center',
+                                            flexWrap: 'wrap',
+                                            cursor: 'pointer'
+                                        }}
+                                        onClick={() => { setPedidoModal(true); setSelectedPedidoInfo(pedido); }}
+                                    >
                                         <div style={{
                                             width: '50%',
                                         }}>
@@ -213,6 +259,133 @@ export default function PedidosPendentes({
                     />
                 </div>
             }
+
+            {pedidoModal ? 
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <div style={{
+                        width: '600px',
+                        height: '60%',
+                        backgroundColor: '#F0F0F0',
+                        borderRadius: '10px',
+                    }}> 
+                        <div style={{
+                            width: '98%',
+                            display: 'flex',
+                            justifyContent: 'space-around',
+                            position: 'relative',
+                            top: '5px',
+                            pointerEvents: 'none',
+                            textAlign: 'center',
+                            marginTop: '5px'
+                        }}>
+                            <div style={{
+                                width: '100%'
+                            }}>
+                                <h3 style={{...defaultTitle}}>Pedido {selectedPedido?.id}</h3>
+                            </div>
+                            <button 
+                                style={{
+                                    ...defaultText,
+                                    border: 0,
+                                    backgroundColor: '#F0F0F0',
+                                    fontSize: '1.2em',
+                                    pointerEvents: 'auto',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={() => {
+                                    setPedidoModal(false)
+                                }}
+                            >X</button>
+                        </div>
+
+                        <div style={{
+                            ...defaultText,
+                            position: 'relative',
+                            top: '10%',
+                            left: '5%'
+                        }}>
+                            <p>Nome: {selectedPedido?.nome}</p>
+                            <p style={{marginTop: '10px'}}>Data do pedido: {dayjs(selectedPedido?.date.toDate()).format('DD/MM/YYYY')}</p>
+                            <p style={{marginTop: '10px'}}>Produtos: </p>
+
+                            <div style={{
+                                width: '90%',
+                                height: '150px',
+                                overflowY: 'auto'
+                            }}>
+                                {selectedPedido?.produtos.map((produto: ProdutoPedido) => {
+                                    return (
+                                        <div style={{
+                                            width: '90%',
+                                            height: '100px',
+                                            borderRadius: '10px',
+                                            border: '1px black solid',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-around',
+                                            marginBottom: '10px'
+                                        }}>
+                                            <img style={{height: '90%'}} src={produto.images_urls[0]} alt="" />
+
+                                            <div>
+                                                <p>{produto.name}</p>
+                                                <p>{parseInt(produto.price).toLocaleString('pt-br', {style: 'currency', currency: 'BRL'})}</p>
+                                            </div>
+
+                                            <div>
+                                                <p>Quantidade Total: {produto.totalQuantity}</p>
+                                                <p>Valor Total: {produto.totalPrice.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'})}</p>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <p style={{marginTop: '10px'}}>Total da Compra: {selectedPedido?.totalPrice.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'})}</p>
+                        
+                            <div style={{
+                                height: '100px',
+                                width: '90%',
+                                display: 'flex',
+                                justifyContent: 'space-around',
+                                alignItems: 'center'
+                            }}>
+                                <button style={{
+                                    width: '150px',
+                                    height: '45px',
+                                    ...defaultText,
+                                    border: 0,
+                                    backgroundColor: 'white',
+                                    borderRadius: '10px',
+                                    fontSize: '1.2em'
+                                }}>
+                                    Pedido Enviado                            
+                                </button>
+                                <button style={{
+                                    width: '150px',
+                                    height: '45px',
+                                    ...defaultText,
+                                    border: 0,
+                                    backgroundColor: 'white',
+                                    borderRadius: '10px',
+                                    fontSize: '1.2em'
+                                }}>
+                                    Cancelar Pedido
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            : <></>}
         </>
     )
 }
