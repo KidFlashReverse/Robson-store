@@ -21,12 +21,11 @@ export interface SelectedPedido {
     nome: string,
     date: Timestamp,
     dataEnvio?: Timestamp,
-    dataConclusao?: Timestamp,
     produtos: any,
     totalPrice: number,
 }
 
-export default function PedidosPendentes({
+export default function PedidosConcluídos({
     userName
 }: InferGetServerSidePropsType<typeof getServerSideProps>){
     const date = new Date();
@@ -67,7 +66,7 @@ export default function PedidosPendentes({
                 return 0;
             });
 
-            setPedidos(data.filter((doc: Pedido) => doc.estado === 'pendente'));
+            setPedidos(data.filter((doc: Pedido) => doc.estado === 'concluido'));
             setLoading(false);
         }).catch(e => {console.log(e)})
     }
@@ -99,7 +98,7 @@ export default function PedidosPendentes({
     return (
         <>
             <Head>
-                <title>Pendentes</title>
+                <title>Concluídos</title>
             </Head>
 
             <div>
@@ -120,7 +119,7 @@ export default function PedidosPendentes({
                         filter: pedidoPendenteModal ? 'blur(3px)' : '',
                         transition: '0.5s all'
                     }}>
-                        <h1 style={{...defaultTitle}}>Pedidos Pendentes</h1>
+                        <h1 style={{...defaultTitle}}>Pedidos Concluídos</h1>
 
                         <input 
                             style={{
@@ -170,8 +169,7 @@ export default function PedidosPendentes({
                 <PedidoModal 
                     selectedPedido={selectedPedido}
                     setModal={setPedidoPendenteModal}
-                    handleUpdateState={handleUpdateState}
-                    estado="pendente"
+                    estado="concluido"
                 />
             : <></>}
         </>

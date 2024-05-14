@@ -21,6 +21,8 @@ export interface Usuario {
     nome: string,
     telefone: string,
     isAdm?: boolean,
+    endereco: string,
+    cpf: string, 
 }
 
 export interface Cliente {
@@ -40,4 +42,6 @@ export interface Pedido {
     ]
     estado: string,
     data: Timestamp,
+    dataEnvio?: Timestamp,
+    dataConclusao?: Timestamp,
 }

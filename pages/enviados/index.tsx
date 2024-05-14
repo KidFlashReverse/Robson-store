@@ -9,8 +9,8 @@ import Loading from "../../components/Loading";
 import Head from "next/head";
 import { GetServerSideProps, GetServerSidePropsResult, InferGetServerSidePropsType } from "next";
 import Pedidos from "../../components/Pedidos";
-import Alert from "../../components/Alert";
 import PedidoModal from "../../components/PedidoModal";
+import Alert from "../../components/Alert";
 
 export interface ProdutoPedido extends Produto{
     totalQuantity: number,
@@ -20,13 +20,11 @@ export interface SelectedPedido {
     id: string,
     nome: string,
     date: Timestamp,
-    dataEnvio?: Timestamp,
-    dataConclusao?: Timestamp,
     produtos: any,
     totalPrice: number,
 }
 
-export default function PedidosPendentes({
+export default function PedidosEnviados({
     userName
 }: InferGetServerSidePropsType<typeof getServerSideProps>){
     const date = new Date();
@@ -35,7 +33,7 @@ export default function PedidosPendentes({
     const [usuarios, setUsuarios] = useState<Array<Usuario>>();
     const [search, setSearch] = useState(userName || '');
     const [loading, setLoading] = useState(false);
-    const [pedidoPendenteModal, setPedidoPendenteModal] = useState(false);
+    const [pedidoModal, setPedidoModal] = useState(false);
     const [selectedPedido, setSelectedPedido] = useState<SelectedPedido>();
     const [alertBoolean, setAlertBoolean] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
@@ -67,21 +65,21 @@ export default function PedidosPendentes({
                 return 0;
             });
 
-            setPedidos(data.filter((doc: Pedido) => doc.estado === 'pendente'));
+            setPedidos(data.filter((doc: Pedido) => doc.estado === 'enviado'));
             setLoading(false);
         }).catch(e => {console.log(e)})
     }
 
     const handleUpdateState = () => {
-        setPedidoPendenteModal(false);
+        setPedidoModal(false);
         setLoading(true);
         const dbRef = doc(db, 'pedidos', `${selectedPedido?.id}`);
 
         updateDoc(dbRef, {
-            estado: 'enviado',
-            dataEnvio: Timestamp.fromDate(date),
+            estado: 'concluido',
+            dataConclusao: Timestamp.fromDate(date),
         }).then(() => {
-            setAlertMessage('Estado do Pedido alterado para Enviado');
+            setAlertMessage('Estado do Pedido alterado para Concluído');
             setAlertBoolean(true);
             getPedidos();
         }).catch((e) => console.log(e));
@@ -94,12 +92,15 @@ export default function PedidosPendentes({
             getUsuarios();
             setLoading(true);
         }
+        if(pedidos && produtos && usuarios && loading){
+            setLoading(false);
+        }
     }, [pedidos, produtos, usuarios]);
 
     return (
         <>
             <Head>
-                <title>Pendentes</title>
+                <title>Enviados</title>
             </Head>
 
             <div>
@@ -117,10 +118,10 @@ export default function PedidosPendentes({
                         width: '98%',
                         display: 'flex',
                         justifyContent: 'space-between',
-                        filter: pedidoPendenteModal ? 'blur(3px)' : '',
+                        filter: pedidoModal ? 'blur(3px)' : '',
                         transition: '0.5s all'
                     }}>
-                        <h1 style={{...defaultTitle}}>Pedidos Pendentes</h1>
+                        <h1 style={{...defaultTitle}}>Pedidos Enviados</h1>
 
                         <input 
                             style={{
@@ -143,8 +144,8 @@ export default function PedidosPendentes({
                         <Pedidos 
                             pedidos={pedidos}
                             setPedidos={setPedidos}
-                            modal={pedidoPendenteModal}
-                            setModal={setPedidoPendenteModal}
+                            modal={pedidoModal}
+                            setModal={setPedidoModal}
                             produtos={produtos}
                             usuarios={usuarios}
                             search={search}
@@ -166,12 +167,12 @@ export default function PedidosPendentes({
                 </div>
             }
 
-            {pedidoPendenteModal ? 
+            {pedidoModal ? 
                 <PedidoModal 
                     selectedPedido={selectedPedido}
-                    setModal={setPedidoPendenteModal}
+                    setModal={setPedidoModal}
                     handleUpdateState={handleUpdateState}
-                    estado="pendente"
+                    estado="enviado"
                 />
             : <></>}
         </>

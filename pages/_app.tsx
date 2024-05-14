@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app'
 import '../styles/global.css'
-import Layout from '../components/layout'
+import Layout from '../components/Layout'
 import AuthProvider from '../components/AuthProvider'
 import { NextPage } from 'next';
 import { ReactElement, ReactNode } from 'react';

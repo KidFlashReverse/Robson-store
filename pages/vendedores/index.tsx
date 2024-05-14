@@ -270,7 +270,8 @@ export default function Vendedores(){
                             }}> 
                                 <h3 style={defaultSubTitle}>Telefone: <span style={{...defaultText, fontSize: '0.8em'}}>{userSelected?.telefone}</span></h3>
                                 <h3 style={{...defaultSubTitle, marginTop: '10px'}}>Email: <span style={{...defaultText, fontSize: '0.8em'}}>teste@test.com</span></h3>
-                                <h3 style={{...defaultSubTitle, marginTop: '10px'}}>Endereço: <span style={{...defaultText, fontSize: '0.8em'}}> Rua Churubengos, 666. Bairro Churubangus - Cidade de Deus/RJ</span></h3>
+                                <h3 style={{...defaultSubTitle, marginTop: '10px'}}>CPF: <span style={{...defaultText, fontSize: '0.8em'}}>{userSelected?.cpf}</span></h3>
+                                <h3 style={{...defaultSubTitle, marginTop: '10px'}}>Endereço: <span style={{...defaultText, fontSize: '0.8em'}}>{userSelected?.endereco}</span></h3>
                                 <button 
                                     style={{
                                         ...defaultText,

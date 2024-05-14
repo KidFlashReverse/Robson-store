@@ -15,9 +15,9 @@ import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { db, storage } from '../../service/firebase';
 import { Produto } from '../../ts/interfaces';
-import CarouselProducts from '../../components/carousel';
+import CarouselProducts from '../../components/Carousel';
 import Head from 'next/head';
-import Loading from '../../components/loading';
+import Loading from '../../components/Loading';
 
 interface Category {
     id: number,
