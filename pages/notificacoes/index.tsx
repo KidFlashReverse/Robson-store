@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { defaultText, defaultTitle } from "../../ts/constants";
+import { defaultText, defaultTitle, fullDate } from "../../ts/constants";
 import { useEffect, useState } from "react";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../service/firebase";
@@ -66,17 +66,22 @@ export default function Notificacoes(){
                 {notifications?.map((value) => {
                     return (
                         <>
-                            <div style={{
-                                height: '60px',
-                                width: '50%',
-                                borderRadius: '15px',
-                                backgroundColor: '#F0F0F0',
-                                display: 'flex',
-                                alignItems: 'center',
-                                fontSize: '1.2em',
-                                paddingLeft: '5%',
-                                marginBottom: '20px',
-                            }}>
+                            <div 
+                                style={{
+                                    height: '60px',
+                                    width: '50%',
+                                    borderRadius: '15px',
+                                    backgroundColor: '#F0F0F0',
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    fontSize: '1.2em',
+                                    paddingLeft: '5%',
+                                    marginBottom: '20px',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={() => {window.location.replace(`/pendentes?id=${value.id}`)}}
+                            >
                                 {value.view === false ? 
                                     <div style={{
                                         width: '20px',
@@ -91,12 +96,14 @@ export default function Notificacoes(){
                                         justifyContent: 'center',
                                         alignItems: 'center',
                                         left: '18%',
+                                        cursor: 'default',
                                     }}>
                                         !
                                     </div>
                                 : <></>}
 
                                 <p style={{...defaultText}}>Nova compra de <b>{getUserFromPedido(value)}</b></p>
+                                <p style={{...defaultText, fontSize: '0.5em', marginRight: '15px', marginTop: '30px'}}>{fullDate(value.timestamp)}</p>
                             </div>
                         </>
                     );

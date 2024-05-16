@@ -27,13 +27,14 @@ export interface SelectedPedido {
 }
 
 export default function PedidosPendentes({
-    userName
+    userName,
+    idPedido
 }: InferGetServerSidePropsType<typeof getServerSideProps>){
     const date = new Date();
     const [pedidos, setPedidos] = useState<Array<Pedido>>();
     const [produtos, setProdutos] = useState<Array<Produto>>();
     const [usuarios, setUsuarios] = useState<Array<Usuario>>();
-    const [search, setSearch] = useState(userName || '');
+    const [search, setSearch] = useState(userName || idPedido || '');
     const [loading, setLoading] = useState(false);
     const [pedidoPendenteModal, setPedidoPendenteModal] = useState(false);
     const [selectedPedido, setSelectedPedido] = useState<SelectedPedido>();
@@ -58,10 +59,10 @@ export default function PedidosPendentes({
 
             data.sort((doc1: Pedido, doc2: Pedido) => {
                 if(doc2.data.seconds > doc1.data.seconds){
-                    return 1;
+                    return -1;
                 }
                 if(doc2.data.seconds < doc1.data.seconds){
-                    return -1;
+                    return 1;
                 }
                 
                 return 0;
@@ -135,7 +136,7 @@ export default function PedidosPendentes({
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Buscar por Nome ou Código do Pedido"
                             type="text" 
-                            defaultValue={userName || ''}
+                            defaultValue={userName || idPedido || ''}
                         />
                     </div>
 
@@ -180,11 +181,13 @@ export default function PedidosPendentes({
 
 export const getServerSideProps = (async({query}) => {
     const userName = Array.isArray(query.name) ? '' : query.name != undefined ? query.name : '';
-
+    const idPedido = Array.isArray(query.id) ? '' : query.id != undefined ? query.id : '';
+ 
     return {
         props: {
-            userName
+            userName,
+            idPedido,
         }
     }
 
-}) satisfies GetServerSideProps<{userName: string}>
+}) satisfies GetServerSideProps<{userName: string, idPedido: string}>

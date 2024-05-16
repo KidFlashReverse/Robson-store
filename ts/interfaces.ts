@@ -50,4 +50,5 @@ export interface Notifications {
     id: string,
     codigoPedido: string,
     view: boolean,
+    timestamp: Timestamp,
 }
