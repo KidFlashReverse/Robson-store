@@ -6,15 +6,39 @@ import SellersIcon from '../public/buttonsIcons/sellersIcon.png';
 import PendingRequestsIcon from '../public/buttonsIcons/pendingRequestIcon.png';
 import RequestsSentIcon from '../public/buttonsIcons/requestSentIcon.png';
 import RequestsCompletedIcon from '../public/buttonsIcons/checkIcon.png';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { defaultText } from "../ts/constants";
 import Tooltip from "./Tooltip";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../service/firebase";
 
 export default function Navbar(){
     const router = useRouter();
     const pathname = router.pathname;
     const [buttonHover, setButtonHover] = useState('');
+    const [notifications, setNotfications] = useState(0);
+
+    const getNotifications = () => {
+        getDocs(collection(db, 'notificacoes')).then((query) => {
+            const data = query.docs.map((doc) => {return doc.data()});
+            let falseNumber = 0;
+
+            data.map((doc) => {
+                if(doc.view === false){
+                    falseNumber += 1;
+                }
+            })
+
+            setNotfications(falseNumber);
+        }).catch((e) => console.log(e));
+    };
+
+    useEffect(() => {
+        if(!notifications){
+            getNotifications();
+        }
+    }, [notifications]);
 
     return (
         <div style={{
@@ -41,7 +65,7 @@ export default function Navbar(){
                     }}
                     onMouseEnter={() => setButtonHover('dashboard')}
                     onMouseLeave={() => setButtonHover('')}
-                    onClick={() => router.push('/')}
+                    onClick={() => window.location.replace('/')}
                 >
                     <Image src={HomeIcon} width={30} alt="Página Principal" style={{filter: 'invert(15%)'}} />
                     {buttonHover === 'dashboard' ? 
@@ -65,13 +89,32 @@ export default function Navbar(){
                     }}
                     onMouseEnter={() => setButtonHover('notificacoes')}
                     onMouseLeave={() => setButtonHover('')}
-                    onClick={() => router.push('/notificacoes')}
+                    onClick={() => window.location.replace('/notificacoes')}
                 >
                     <Image src={NotficationsIcon} width={30} alt="Página de Notificações" style={{filter: 'invert(15%)'}} />
                     {buttonHover === 'notificacoes' ? 
                         <Tooltip 
                             nameButton="Notificações"
                         />
+                    : <></>}
+                    {notifications != 0 ? 
+                        <div style={{
+                            ...defaultText,
+                            position: 'absolute',
+                            width: '15px',
+                            height: '15px',
+                            marginLeft: '30px',
+                            marginTop: '20px',
+                            borderRadius: '100%',
+                            backgroundColor: 'red',
+                            color: 'white',
+                            fontSize: '0.7em',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            {notifications}
+                        </div>
                     : <></>}
                 </div>
                 <div 
@@ -89,7 +132,7 @@ export default function Navbar(){
                     }}
                     onMouseEnter={() => setButtonHover('estoque')}
                     onMouseLeave={() => setButtonHover('')}
-                    onClick={() => router.push('/estoque')}
+                    onClick={() => window.location.replace('/estoque')}
                 >
                     <Image src={StorageIcon} width={30} alt="Página do Estoque" style={{filter: 'invert(15%)'}} />
                     {buttonHover === 'estoque' ? 
@@ -113,7 +156,7 @@ export default function Navbar(){
                     }}
                     onMouseEnter={() => setButtonHover('vendedores')}
                     onMouseLeave={() => setButtonHover('')}
-                    onClick={() => router.push('/vendedores')}
+                    onClick={() => window.location.replace('/vendedores')}
                 >
                     <Image src={SellersIcon} width={30} alt="Página dos Vendedores" style={{filter: 'invert(15%)'}} />
                     {buttonHover === 'vendedores' ? 
@@ -161,7 +204,7 @@ export default function Navbar(){
                     }}
                     onMouseEnter={() => setButtonHover('enviados')}
                     onMouseLeave={() => setButtonHover('')}
-                    onClick={() => router.push('/enviados')}
+                    onClick={() => window.location.replace('/enviados')}
                 >
                     <Image src={RequestsSentIcon} width={30} alt="Página dos Pedidos Enviados" />
                     {buttonHover === 'enviados' ? 
@@ -185,7 +228,7 @@ export default function Navbar(){
                     }}
                     onMouseEnter={() => setButtonHover('concluidos')}
                     onMouseLeave={() => setButtonHover('')}
-                    onClick={() => router.push('/concluidos')}
+                    onClick={() => window.location.replace('/concluidos')}
                 >
                     <Image src={RequestsCompletedIcon} width={30} alt="Página dos Pedidos Concluídos" style={{filter: 'invert(15%)'}} />
                     {buttonHover === 'concluidos' ? 

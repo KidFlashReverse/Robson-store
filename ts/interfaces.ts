@@ -45,3 +45,9 @@ export interface Pedido {
     dataEnvio?: Timestamp,
     dataConclusao?: Timestamp,
 }
+
+export interface Notifications {
+    id: string,
+    codigoPedido: string,
+    view: boolean,
+}
