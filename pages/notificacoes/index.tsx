@@ -14,10 +14,14 @@ export default function Notificacoes(){
 
     const getUserFromPedido = (notification: Notifications) => {
         const pedido = pedidos?.find((value) => value.id === notification.codigoPedido); 
-        
-        console.log(pedido);
 
         return usuarios?.find((value) => value.id === pedido?.id_usuario)?.nome;
+    }
+
+    const replaceForState = (id: string) => {
+        const pedido = pedidos?.find((value) => value.id === id);
+        
+        window.location.replace(`/${pedido?.estado}s?id=${id}`);
     }
 
     useEffect(() => {
@@ -35,7 +39,18 @@ export default function Notificacoes(){
                         view: true,
                     });
                 }
-            })
+            });
+            
+            notifications.sort((a, b) => {
+                if(a.timestamp.seconds > b.timestamp.seconds){
+                    return 1;
+                }
+                if(a.timestamp.seconds < b.timestamp.seconds){
+                    return -1;
+                }
+
+                return 0;
+            });
         }
     }, [notifications]);
     return (
@@ -80,7 +95,7 @@ export default function Notificacoes(){
                                     marginBottom: '20px',
                                     cursor: 'pointer',
                                 }}
-                                onClick={() => {window.location.replace(`/pendentes?id=${value.id}`)}}
+                                onClick={() => {replaceForState(value.codigoPedido)}}
                             >
                                 {value.view === false ? 
                                     <div style={{

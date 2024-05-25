@@ -38,6 +38,7 @@ interface FormData{
     images?: FileList | never[],
     images_urls?: Array<string>,
     category: string,
+    commission: string,
 }
 
 export default function Estoque(){
@@ -81,6 +82,7 @@ export default function Estoque(){
         description: '',
         price: '',
         category: '',
+        commission: '',
     };
 
     const [formData, setFormData] = useState<FormData>(defaultFormData);
@@ -173,6 +175,7 @@ export default function Estoque(){
                 quantity: productModalInfo.quantity,
                 category: productModalInfo.category,
                 images_urls: productModalInfo.images_urls,
+                commission: productModalInfo.commission,
             });
         }
 
@@ -634,7 +637,30 @@ export default function Estoque(){
                                 <p style={{...defaultText, fontWeight: 'bold'}}>Preço:</p>
                                 <p style={{...defaultText, marginLeft: '10px'}}>R${productModalInfo?.price}</p>
                             </div>
+                            <div style={{
+                                display: 'flex',
+                                width: '50%',
+                            }}>
+                                <p style={{...defaultText, fontWeight: 'bold'}}>Comissão:</p>
+                                <p style={{...defaultText, marginLeft: '10px'}}>{productModalInfo?.commission}%</p>
+                            </div>
                         </div>
+                        {productModalInfo?.commission ? 
+                            <div style={{
+                                display: 'flex',
+                                marginTop: '20px',
+                                marginLeft: '20px',
+                                width: '100%',
+                            }}>
+                                <div style={{
+                                    display: 'flex',
+                                    width: '50%',
+                                }}>
+                                    <p style={{...defaultText, fontWeight: 'bold'}}>Valor da Comissão:</p>
+                                    <p style={{...defaultText, marginLeft: '10px'}}>R${(parseInt(productModalInfo.commission) / 100) * parseInt(productModalInfo.price)}</p>
+                                </div>
+                            </div>
+                        : <></>}
                     </div>
                     <div style={{
                         height: '20%',
@@ -741,7 +767,7 @@ export default function Estoque(){
                                 <input 
                                     style={{
                                         border: 0,
-                                        width: '40%',
+                                        width: '26%',
                                         marginLeft: '25px',
                                         height: '35px',
                                         borderRadius: '10px',
@@ -757,7 +783,7 @@ export default function Estoque(){
                                 <input 
                                     style={{
                                         border: 0,
-                                        width: '40%',
+                                        width: '26%',
                                         marginLeft: '2.5%',
                                         height: '35px',
                                         borderRadius: '10px',
@@ -769,6 +795,23 @@ export default function Estoque(){
                                     id="price" 
                                     value={formData.price}
                                     onChange={(e) => setFormData({...formData, price: e.target.value})}
+                                />
+                                <input 
+                                    style={{
+                                        border: 0,
+                                        width: '22%',
+                                        marginLeft: '2.5%',
+                                        height: '35px',
+                                        borderRadius: '10px',
+                                        paddingLeft: '12px',
+                                        fontSize: '0.6em',
+                                    }}
+                                    placeholder='Comissão(%)'
+                                    type="number" 
+                                    name="price" 
+                                    id="price" 
+                                    value={formData.commission}
+                                    onChange={(e) => setFormData({...formData, commission: e.target.value})}
                                 />
                                 <textarea 
                                     style={{

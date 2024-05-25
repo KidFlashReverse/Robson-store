@@ -102,6 +102,7 @@ export default function PedidoModal({
                                     <div>
                                         <p>{produto.name}</p>
                                         <p>{parseInt(produto.price).toLocaleString('pt-br', {style: 'currency', currency: 'BRL'})}</p>
+                                        <p>Comissão de {produto.commission}%</p>
                                     </div>
 
                                     <div>
@@ -139,7 +140,7 @@ export default function PedidoModal({
                                 Pedido {estado === 'pendente' ? 'Enviado' : 'Concluído'}                            
                             </button>
                         :<></>}
-
+{/* 
                         {estado != 'concluido' ? 
                             <button style={{
                                 width: '150px',
@@ -152,7 +153,7 @@ export default function PedidoModal({
                             }}>
                                 Cancelar Pedido
                             </button>
-                        : <></>}
+                        : <></>} */}
                         
                     </div>
                 </div>

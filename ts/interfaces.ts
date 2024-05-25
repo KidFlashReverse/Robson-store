@@ -13,6 +13,7 @@ export interface Produto {
     price: string,
     images_urls: Array<string>,
     category: string,
+    commission: string,
 }
 
 export interface Usuario {
