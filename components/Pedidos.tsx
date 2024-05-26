@@ -96,6 +96,7 @@ export default function Pedidos({
                 return (
                     <>
                         <div 
+                            key={pedido.id}
                             style={{
                                 width: '80%',
                                 height: '100px',

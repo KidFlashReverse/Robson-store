@@ -82,6 +82,7 @@ export default function Notificacoes(){
                     return (
                         <>
                             <div 
+                                key={value.id}
                                 style={{
                                     height: '60px',
                                     width: '50%',

@@ -95,10 +95,10 @@ export default function DashBoard(){
                         padding: '5%',
                     }}> 
                         {orderProductsBySells()}
-                        {productsSelled.map(value => {
+                        {productsSelled.map((value, index) => {
                             return (
                                 <>
-                                    <div style={{
+                                    <div key={index + 1} style={{
                                         width: '100%',
                                         marginTop: '6px',
                                         display: 'flex',
@@ -129,7 +129,7 @@ export default function DashBoard(){
                             
                             return (
                                 <>
-                                    <div style={{
+                                    <div key={value.id} style={{
                                         width: '100%',
                                         marginTop: '6px',
                                         display: 'flex',
@@ -155,10 +155,10 @@ export default function DashBoard(){
                         padding: '5%',
                     }}> 
                         {orderSellersBySells()}
-                        {bestSellers.map(value => {
+                        {bestSellers.map((value, index) => {
                             return (
                                 <>
-                                    <div style={{
+                                    <div key={index + 1} style={{
                                         width: '100%',
                                         marginTop: '6px',
                                         display: 'flex',

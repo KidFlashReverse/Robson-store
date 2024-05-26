@@ -323,10 +323,10 @@ export default function Estoque(){
                         right: '30%',
                         overflow: 'auto',
                     }}> 
-                        {categories?.map((value: any) => {
+                        {categories?.map((value: Category) => {
                             return (
                                 <>
-                                    <div style={{
+                                    <div key={value.id} style={{
                                         width: '100%',
                                         display: 'flex',
                                         justifyContent: 'center',
@@ -493,6 +493,7 @@ export default function Estoque(){
                             return (
                                 <>
                                     <div 
+                                        key={value.id}
                                         style={{
                                             backgroundColor: '#F7F7F7',
                                             width: '200px',
@@ -850,9 +851,9 @@ export default function Estoque(){
                                 >
                                     <option disabled hidden value="">Categoria</option>
                                     <option value='other'>Nova Categoria</option>
-                                    {categories?.map((value: any) => {
+                                    {categories?.map((value: Category) => {
                                         return (
-                                            <option value={value.name}>{value.name}</option>
+                                            <option key={value.id} value={value.name}>{value.name}</option>
                                         );
                                     })}
                                 </select>

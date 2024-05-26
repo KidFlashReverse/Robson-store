@@ -14,6 +14,25 @@ export default function PedidoModal({
     handleUpdateState?: () => void,
     estado: string,
 }){
+    const totalComission = (): {
+        total: number,
+        percent: number,
+    } => {
+        const comissionsPrice: number[] = [];
+
+        selectedPedido?.produtos.map((value: ProdutoPedido) => {
+            return comissionsPrice.push(value.totalPrice * (parseInt(value.commission) / 100));
+        });
+
+        const total = comissionsPrice.reduce((finalPrice, priceComission) => {
+            return finalPrice + priceComission;
+        });
+
+        const percent = (total / (selectedPedido?.totalPrice ?? 0)) * 100;
+
+        return {total, percent};
+    };
+
     return (
         <div style={{
             position: 'absolute',
@@ -87,7 +106,7 @@ export default function PedidoModal({
                     }}>
                         {selectedPedido?.produtos.map((produto: ProdutoPedido) => {
                             return (
-                                <div style={{
+                                <div key={produto.id} style={{
                                     width: '90%',
                                     height: '100px',
                                     borderRadius: '10px',
@@ -115,6 +134,7 @@ export default function PedidoModal({
                     </div>
 
                     <p style={{marginTop: '10px'}}>Total da Compra: {selectedPedido?.totalPrice.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'})}</p>
+                    <p style={{marginTop: '10px'}}>Total da Comissão: {totalComission().total.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'}) + ' (' + totalComission().percent + '%)'}</p>
                 
                     <div style={{
                         height: '100px',

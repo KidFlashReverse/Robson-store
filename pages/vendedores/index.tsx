@@ -45,9 +45,10 @@ export default function Vendedores(){
         });
     }
 
-    const usersBox = (user: Usuario) => {
+    const usersBox = (user: Usuario, index: number) => {
         return (
             <div 
+                key={index + 1}
                 style={{
                     width: '280px',
                     height: '200px',
@@ -174,7 +175,7 @@ export default function Vendedores(){
                             if(users.length > 4 && (index + 1 <= Math.round(users.length / 2))){
                                 return (
                                     <>
-                                        {usersBox(user)}
+                                        {usersBox(user, index)}
                                     </>
                                 );
                             }
@@ -182,7 +183,7 @@ export default function Vendedores(){
                             if(users.length <= 4){
                                 return (
                                     <>
-                                        {usersBox(user)}
+                                        {usersBox(user, index)}
                                     </>
                                 );
                             }
@@ -201,7 +202,7 @@ export default function Vendedores(){
                                 if(index + 1 > Math.round(users.length / 2)){
                                     return (
                                         <>
-                                            {usersBox(user)}
+                                            {usersBox(user, index)}
                                         </>
                                     );
                                 }
@@ -569,7 +570,7 @@ export default function Vendedores(){
                                 }
 
                                 return (
-                                    <div>
+                                    <div key={client.userId}>
                                         <div 
                                             style={{
                                                 width: '100%',

@@ -26,7 +26,7 @@ export default function CarouselProducts({
                     transitionTime={600}       
                 >
                     {productModalInfo?.images_urls.map((image, index) => (
-                        <div style={{width: '100%', filter: 'invert(100%)', marginBottom: '35px'}}>
+                        <div key={index + 1} style={{width: '100%', filter: 'invert(100%)', marginBottom: '35px'}}>
                             <img style={{height: '200px', width: '200px', objectFit: 'contain', mixBlendMode: 'multiply'}} src={image} alt="Produto Imagem" />
                         </div>
                     ))}
